@@ -10,7 +10,7 @@ class File:
     @property
     def obj(cls):
         if cls._obj is None:
-            with open("config.yml") as f:
+            with open("conf/config.yml") as f:
                 cls._obj = yaml.safe_load(f)
         return cls._obj
 
