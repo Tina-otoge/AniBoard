@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <h1 class="center-align">Welcome to <a href="{{ url_for('index') }}">AniBoard</a></h1>
+            <div class="subtitle">
+                A simple tool to keep up with anime episodes that aired but you haven't watched yet
+            </div>
+        </div>
+    </div>
+
+    <form method="get">
+        <div class="row">
+            <div class="col s10">
+                <div class="input-field">
+                    <input id="username" name="username" type="text" class="validate" value="{{ username }}">
+                    <label for="username">MAL Username</label>
+                </div>
+            </div>
+            <div class="col s2">
+                <button class="btn waves-effect waves-light" type="submit">
+                    Submit
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <div class="input-field">
+                    <input id="url" name="url" type="text" class="validate" value="{{ url }}">
+                    <label for="url">Button URL</label>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {% if username and not anime_list %}
+    <div class="row">
+        <div class="col s12">
+            Nothing to watch!
+        </div>
+    </div>
+    {% endif %}
+
+    {% for anime in anime_list if not anime.up_to_date %}
+    <div class="row anime">
+        <div class="col s12 z-depth-1">
+            <div class="col s2">
+                <img class="cover" src="{{ anime.image }}">
+            </div>
+            <div class="col s10">
+                <div class="title">{{ anime.title }} ({{ anime.watched_episodes }} / {{ anime.total_episodes }})</div>
+                <div class="episodes">
+                    {% for ep in anime.not_watched_episodes %}
+                    <a href="{{ urlize(anime, ep) }}" class="btn" _target="blank">{{ ep }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .anime .cover {
+        width: 100%;
+        max-height: 200px;
+        object-fit: contain;
+    }
+
+    .anime .title {
+        font-size: 1.25em;
+        margin-bottom: .5em;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: darkgray;
+    }
+</style>
+{% endblock %}

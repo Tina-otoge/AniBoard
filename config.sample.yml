@@ -1,0 +1,11 @@
+# Sometimes Anilist does not know about the MAL ID of a show, so we need to map it manually
+mal_to_anilist:
+  # Pop Team Epic 2
+  50663: 143086
+  # Chainsaw Man
+  44511: 127230
+# Sometimes we want to use a different title when clicking the episode button
+url_title_map:
+  Poputepipikku: "Pop Team Epic"
+# MAL API client ID, you can get one from https://myanimelist.net/apiconfig
+mal_client_id: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
