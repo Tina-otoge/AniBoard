@@ -38,9 +38,11 @@ class Anime:
 
     @property
     def not_watched_episodes(self):
-        if self.watched_episodes is None or self.aired_episodes is None:
-            return None
-        return list(range(self.watched_episodes + 1, self.aired_episodes + 1))
+        left = self.aired_episodes or self.total_episodes
+        if not left:
+            return []
+        watched = self.watched_episodes or 0
+        return list(range(watched + 1, left + 1))
 
     @property
     def up_to_date(self):

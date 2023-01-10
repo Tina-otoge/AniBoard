@@ -41,12 +41,12 @@ def index():
     def urlize(anime, episode):
         title = Config.url_title_map.get(anime.title, anime.title)
         title = anime.title.lower()
+        title = re.sub(r"[^\w\d]", " ", title)
         title = " ".join(
             x
             for x in title.split()
             if x not in ("the", "a", "an", "part", "season")
         )
-        title = re.sub(r"[^\w\d]", " ", title)
         return data["url"].format(
             title=urllib.parse.quote(title),
             episode=episode,

@@ -1,0 +1,73 @@
+<div class="col l12 xl6">
+    <div class="anime row">
+        <div class="col s3 l5 cover-container">
+            <img class="cover" src="{{ anime.image }}">
+        </div>
+        <div class="col s9 l7">
+            <div class="title">{{ anime.title }} ({{ anime.watched_episodes }} / {{ anime.total_episodes or "?"
+                }})
+            </div>
+            <div class="season">{{ anime.season }}</div>
+            <div class="episodes">
+                {% for ep in (anime.not_watched_episodes[:10] if anime.not_watched_episodes else []) %}
+                <a href="{{ urlize(anime, ep) }}" class="btn" target="_blank">{{ ep }}</a>
+                {% endfor %}
+                {% if anime.not_watched_episodes and anime.not_watched_episodes[10:] %}...{% endif %}
+            </div>
+            {% if anime.time_until_next_episode %}
+            <div class="next">
+                Next episode in {{ anime.time_until_next_episode.days }} days,
+                {{ anime.time_until_next_episode.seconds // (60 * 60) }} hours.
+            </div>
+            {% endif %}
+            <div class="websites">
+                <a href="{{ urlize(anime, "")}}" class="btn" target="_blank">Action</a>
+                <a href="{{ anime.mal_url }}" class="btn mal" target="_blank">MAL</a>
+                <a href="{{ anime.anilist_url }}" class="btn anilist" target="_blank">AniList</a>
+                <a href="{{ anime.google_url }}" class="btn google" target="_blank">Google</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .anime {
+        width: 95%;
+        box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px;
+        border-radius: 3px;
+        overflow-y: auto;
+    }
+
+    .anime,
+    .anime .cover,
+    .anime .cover-container {
+        height: 300px;
+    }
+
+    .anime .cover-container {
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .anime .cover {
+        width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .anime .title {
+        font-size: 1.25em;
+        margin-bottom: .5em;
+    }
+
+    .anime .episodes,
+    .anime .websites {
+        margin: 1.5em 0;
+    }
+
+    .anime .websites .btn {
+        margin-bottom: .5em;
+        font-size: .9em;
+        padding: 0 .7em;
+    }
+</style>

@@ -28,5 +28,9 @@ class MALClient:
     def get_list(cls, username, status=None):
         return cls.request(
             f"users/{username}/animelist",
-            params={"status": status or "", "fields": "list_status"},
+            params={
+                "status": status or "",
+                "fields": "list_status",
+                "limit": 1000,
+            },
         ).get("data", [])

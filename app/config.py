@@ -34,7 +34,7 @@ class Config:
     anilist_cache_expire_minutes = File.get("mal_cache_expire_minutes", 60)
     app_name = File.get("app_name", "AniBoard")
     default_url = File.get(
-        "default_url", "https://nyaa.si/?f=0&c=1_2&q=hevc+{title}+{episode}"
+        "default_url", "https://nyaa.si/?f=0&c=1_2&q=hevc {title} {episode}"
     )
     cache_dir = Path(File.get("cache_dir", "var/cache"))
     proxy = File.get("proxy")
