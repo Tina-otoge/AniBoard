@@ -37,6 +37,19 @@
         </div>
     </form>
 
+    {% if username %}
+    <div class="row">
+        <p>
+            <a href="https://myanimelist.net/animelist/{{ username }}?status=1" class="btn mal" target="_blank">
+                MAL Watchlist
+            </a>
+            <a href="https://myanimelist.net/profile/{{ username }}" class="btn mal" target="_blank">
+                MAL Profile
+            </a>
+        </p>
+    </div>
+    {% endif %}
+
     {% if username and not anime_list %}
     <div class="row">
         <div class="col s12">
