@@ -9,3 +9,5 @@ url_title_map:
   Poputepipikku: "Pop Team Epic"
 # MAL API client ID, you can get one from https://myanimelist.net/apiconfig
 mal_client_id: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# proxy: https://user:password@host:port

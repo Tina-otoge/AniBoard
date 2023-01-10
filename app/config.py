@@ -37,6 +37,7 @@ class Config:
         "default_url", "https://nyaa.si/?f=0&c=1_2&q=hevc+{title}+{episode}"
     )
     cache_dir = Path(File.get("cache_dir", "var/cache"))
+    proxy = File.get("proxy")
 
 
 Config.cache_dir.mkdir(parents=True, exist_ok=True)

@@ -1,7 +1,9 @@
 import json
 import time
+from datetime import timedelta
 
-from qlient.http import Fields, GraphQLResponse, HTTPClient
+from qlient.http import Fields, GraphQLResponse, HTTPBackend, HTTPClient
+from requests_cache import CachedSession
 
 from .config import Config
 
@@ -41,7 +43,15 @@ class AnilistClient:
     @property
     def client(cls):
         if cls._client is None:
-            cls._client = HTTPClient(cls.url)
+            session = CachedSession(
+                Config.cache_dir / "anilist",
+                expire_after=timedelta(
+                    minutes=Config.anilist_cache_expire_minutes
+                ),
+            )
+            if Config.proxy:
+                session.proxies = {"http": Config.proxy, "https": Config.proxy}
+            cls._client = HTTPClient(HTTPBackend(cls.url, session=session))
         return cls._client
 
     @classmethod
@@ -67,12 +77,20 @@ class AnilistClient:
         else:
             search = {"idMal": mal_id}
         key = " ".join(f"{k}{v}" for k, v in search.items())
+        # Cached session doesn't work with HTTPBackend apparently so we still
+        # use our manual cache
         cache = cache_get(key)
         if cache:
             return cache
         data = cls.query(
             "Media",
-            Fields("episodes", nextAiringEpisode="episode"),
+            Fields(
+                "id",
+                "episodes",
+                "season",
+                "seasonYear",
+                nextAiringEpisode=["episode", "timeUntilAiring"],
+            ),
             **search,
         )
         cache_set(key, data)

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import timedelta
 
 from .anilist import AnilistClient
 from .mal import MALClient
@@ -37,6 +38,8 @@ class Anime:
 
     @property
     def not_watched_episodes(self):
+        if self.watched_episodes is None or self.aired_episodes is None:
+            return None
         return list(range(self.watched_episodes + 1, self.aired_episodes + 1))
 
     @property
@@ -46,6 +49,35 @@ class Anime:
     @property
     def image(self):
         return self._mal["main_picture"]["large"]
+
+    @property
+    def time_until_next_episode(self):
+        try:
+            return timedelta(
+                seconds=self._anilist["nextAiringEpisode"]["timeUntilAiring"]
+            )
+        except (KeyError, TypeError):
+            return None
+
+    @property
+    def season(self):
+        return (
+            self._anilist["season"].capitalize()
+            + " "
+            + str(self._anilist["seasonYear"])
+        )
+
+    @property
+    def mal_url(self):
+        return f"https://myanimelist.net/anime/{self._mal['id']}"
+
+    @property
+    def anilist_url(self):
+        return f"https://anilist.co/anime/{self._anilist['id']}"
+
+    @property
+    def google_url(self):
+        return f"https://www.google.com/search?q=anime%20{self.title}"
 
 
 def get_anime_list(mal_username):

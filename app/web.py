@@ -1,5 +1,6 @@
 import re
 import urllib.parse
+from datetime import timedelta
 
 import flask
 from flask import Flask
@@ -45,7 +46,7 @@ def index():
             for x in title.split()
             if x not in ("the", "a", "an", "part", "season")
         )
-        title = re.sub(r"\s+", " ", title)
+        title = re.sub(r"[^\w\d]", " ", title)
         return data["url"].format(
             title=urllib.parse.quote(title),
             episode=episode,
@@ -57,5 +58,5 @@ def index():
     response = flask.make_response(html)
     for setting, value in data.items():
         if value:
-            response.set_cookie(setting, value)
+            response.set_cookie(setting, value, max_age=timedelta(days=365))
     return response
