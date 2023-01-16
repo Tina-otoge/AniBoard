@@ -4,9 +4,20 @@ mal_to_anilist:
   50663: 143086
   # Chainsaw Man
   44511: 127230
+  # Danmachi S4 Part 2
+  53111: 155211
+  # Reborn to master the blade
+  50481: 142193
+  # Saving 80K gold
+  52461: 152765
+  # Trigun Stampede
+  52093: 151040
 # Sometimes we want to use a different title when clicking the episode button
-url_title_map:
-  Poputepipikku: "Pop Team Epic"
+# often because MAL titles tend to be very verbose
+button_title_map:
+  53111: "Dungeon ni Deai wo Motomeru no wa Machigatteiru Darou ka S4"
+  50481: "Eiyuuou, Bu wo Kiwameru Tame Tenseisu"
+  48417: "Maou Gakuin no Futekigousha S2"
 # MAL API client ID, you can get one from https://myanimelist.net/apiconfig
 mal_client_id: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 

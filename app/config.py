@@ -27,7 +27,7 @@ class File:
 
 
 class Config:
-    url_title_map = File.get("button_title_map", {})
+    button_title_map = File.get("button_title_map", {})
     mal_to_anilist = File.get("mal_to_anilist", {})
     mal_client_id = File.need("mal_client_id")
     mal_cache_expire_minutes = File.get("mal_cache_expire_minutes", 10)

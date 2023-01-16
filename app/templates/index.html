@@ -75,7 +75,7 @@
     <h2>Missing data</h2>
     <div>
         <ul class="collection">
-            {% for anime in anime_list if not anime._anilist or anime._anilist.episodes == None %}
+            {% for anime in anime_list if not anime._anilist %}
             <li class="collection-item"><a href="{{ anime.mal_url }}">MAL #{{ anime._mal.id }}</a> {{ anime.title }}
             </li>
             {% endfor %}

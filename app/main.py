@@ -69,7 +69,7 @@ class Anime:
 
     @property
     def mal_url(self):
-        return f"https://myanimelist.net/anime/{self.id}"
+        return f"https://myanimelist.net/anime/{self._mal.id}"
 
     @property
     def anilist_url(self):

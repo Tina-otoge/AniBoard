@@ -38,8 +38,8 @@ def anime_list_route(username):
     anime_list = get_anime_list(username)
 
     def urlize(anime, episode):
-        title = Config.url_title_map.get(anime.title, anime.title)
-        title = anime.title.lower()
+        title = Config.button_title_map.get(anime._mal.id, anime.title)
+        title = title.lower()
         title = re.sub(r"[^\w\d]", " ", title)
         title = " ".join(
             x
@@ -73,4 +73,5 @@ def index():
         if value:
             response.set_cookie(setting, value, max_age=timedelta(days=365))
 
+    return response
     return response
