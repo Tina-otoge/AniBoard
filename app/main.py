@@ -2,29 +2,31 @@ from dataclasses import dataclass
 from datetime import timedelta
 
 from .anilist import AnilistClient
-from .mal import MALClient
+from .mal import ListEntry, MALClient
 
 
 @dataclass
 class Anime:
-    _mal: dict
-    _mal_status: dict
+    _mal: ListEntry
 
-    @property
-    def _anilist(self):
-        return AnilistClient.get_anime(mal_id=self._mal["id"])
+    def __post_init__(self):
+        self._anilist = AnilistClient.get_anime(mal_id=self._mal.id)
 
     @property
     def title(self):
-        return self._mal["title"]
+        return self._mal.title
+
+    @property
+    def image(self):
+        return self._mal.image
+
+    @property
+    def watched_episodes(self):
+        return self._mal.num_episodes_watched
 
     @property
     def total_episodes(self):
         return self._anilist["episodes"]
-
-    @property
-    def watched_episodes(self):
-        return self._mal_status["num_episodes_watched"]
 
     @property
     def aired_episodes(self):
@@ -49,10 +51,6 @@ class Anime:
         return self.watched_episodes == self.aired_episodes
 
     @property
-    def image(self):
-        return self._mal["main_picture"]["large"]
-
-    @property
     def time_until_next_episode(self):
         try:
             return timedelta(
@@ -71,7 +69,7 @@ class Anime:
 
     @property
     def mal_url(self):
-        return f"https://myanimelist.net/anime/{self._mal['id']}"
+        return f"https://myanimelist.net/anime/{self.id}"
 
     @property
     def anilist_url(self):
@@ -84,7 +82,4 @@ class Anime:
 
 def get_anime_list(mal_username):
     watching = MALClient.get_list(mal_username, status="watching")
-    return [
-        Anime(_mal=entry["node"], _mal_status=entry["list_status"])
-        for entry in watching
-    ]
+    return [Anime(x) for x in watching]

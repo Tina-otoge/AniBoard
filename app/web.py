@@ -22,21 +22,20 @@ def inject_config():
     return Config
 
 
-@app.route("/")
-def index():
+def get_data():
     settings = ["username", "url"]
-    data = {
+    return {
         setting: flask.request.args.get(setting)
         or flask.request.cookies.get(setting)
         or ""
         for setting in settings
     }
-    if not data["username"]:
-        anime_list = []
-    else:
-        anime_list = get_anime_list(data["username"])
-    if not data["url"]:
-        data["url"] = Config.default_url
+
+
+@app.route("/<username>")
+def anime_list_route(username):
+    data = get_data()
+    anime_list = get_anime_list(username)
 
     def urlize(anime, episode):
         title = Config.url_title_map.get(anime.title, anime.title)
@@ -52,11 +51,26 @@ def index():
             episode=episode,
         )
 
-    html = flask.render_template(
+    return flask.render_template(
         "index.html", anime_list=anime_list, urlize=urlize, **data
     )
-    response = flask.make_response(html)
+
+
+@app.route("/")
+def index():
+    data = get_data()
+    response = None
+    if data["username"]:
+        response = flask.redirect(
+            flask.url_for("anime_list_route", username=data["username"])
+        )
+    if not data["url"]:
+        data["url"] = Config.default_url
+
+    response = response or flask.render_template("index.html", **data)
+
     for setting, value in data.items():
         if value:
             response.set_cookie(setting, value, max_age=timedelta(days=365))
+
     return response
