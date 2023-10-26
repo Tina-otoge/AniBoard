@@ -7,6 +7,7 @@ from flask import Flask
 
 from .config import Config
 from .main import get_anime_list
+from .sonarr import SonarrClient
 
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -74,4 +75,16 @@ def index():
             response.set_cookie(setting, value, max_age=timedelta(days=365))
 
     return response
-    return response
+
+
+@app.post("/sonarr")
+def sync_to_sonarr():
+    data = get_data()
+    anime_list = get_anime_list(data["username"])
+    body = flask.request.form.to_dict()
+    client = SonarrClient(body["sonarr_url"], body["sonarr_api_key"])
+    for anime in anime_list:
+        if not anime.tvdb_id:
+            continue
+        client.series_import(anime.tvdb_id)
+    return flask.redirect(flask.url_for("index"))

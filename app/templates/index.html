@@ -36,6 +36,26 @@
             </div>
         </div>
     </form>
+    <form class="row" action="sonarr" method="post">
+        <div class="col s5">
+            <div class="input-field">
+                <input id="sonarr-url" name="sonarr_url" type="text" value="http://127.0.0.1:8989">
+                <label for="sonarr-url">Sonarr URL</label>
+            </div>
+        </div>
+        <div class="col s5">
+            <div class="input-field">
+                <input id="sonarr-api-key" name="sonarr_api_key" type="password">
+                <label for="sonarr-api-key">Sonarr API Key</label>
+            </div>
+        </div>
+        <div class="col s2">
+            <button class="btn waves-effect waves-light" type="submit">
+                Sync
+                <i class="material-icons right">sync</i>
+            </button>
+        </div>
+    </form>
 
     {% if username %}
     <div class="row">

@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from .anilist import AnilistClient
 from .mal import ListEntry, MALClient
-from .mapping import MAL_TO_ANILIST
+from .mapping import MAL_TO_OTHERS
 
 
 @dataclass
@@ -11,8 +11,13 @@ class Anime:
     _mal: ListEntry
 
     def __post_init__(self):
-        anilist_id = MAL_TO_ANILIST.get(self._mal.id)
-        self._anilist = AnilistClient.get_anime(anilist_id=anilist_id)
+        self._mapping = MAL_TO_OTHERS.get(self._mal.id)
+        if not self._mapping:
+            return
+        anilist_id = self._mapping.get("anilist_id")
+        self._anilist = AnilistClient.get_anime(
+            anilist_id=anilist_id, mal_id=self._mal.id
+        )
 
     @property
     def title(self):
@@ -80,6 +85,10 @@ class Anime:
     @property
     def google_url(self):
         return f"https://www.google.com/search?q=anime%20{self.title}"
+
+    @property
+    def tvdb_id(self):
+        return self._mapping.get("thetvdb_id")
 
 
 def get_anime_list(mal_username):
