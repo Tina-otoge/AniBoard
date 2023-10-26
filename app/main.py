@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from .anilist import AnilistClient
 from .mal import ListEntry, MALClient
+from .mapping import MAL_TO_ANILIST
 
 
 @dataclass
@@ -10,7 +11,8 @@ class Anime:
     _mal: ListEntry
 
     def __post_init__(self):
-        self._anilist = AnilistClient.get_anime(mal_id=self._mal.id)
+        anilist_id = MAL_TO_ANILIST.get(self._mal.id)
+        self._anilist = AnilistClient.get_anime(anilist_id=anilist_id)
 
     @property
     def title(self):

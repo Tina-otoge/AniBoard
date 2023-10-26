@@ -1,0 +1,3 @@
+[submodule "lib/mapping"]
+	path = lib/mapping
+	url = https://github.com/Fribb/anime-lists
