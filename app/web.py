@@ -11,6 +11,7 @@ from .sonarr import SonarrClient
 
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["SECRET_KEY"] = "yolo it's only for flash messages"
 
 
 @app.template_global("app")

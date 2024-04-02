@@ -2,6 +2,7 @@ import urllib.parse
 from dataclasses import dataclass
 from datetime import timedelta
 
+import flask
 from requests_cache import CachedSession
 
 from .config import Config
@@ -91,6 +92,17 @@ class MALClient:
             id2 = id2.split(".")[0]
             return f"https://cdn.myanimelist.net/images/anime/{id1}/{id2}l.jpg"
 
+        try:
+            anime_list = cls.request(
+                url,
+                params={
+                    "status": status_map[status] if status else "",
+                },
+            )
+        except Exception:
+            flask.flash(f'Failed to fetch MAL list for "{username}"')
+            return []
+
         return [
             ListEntry(
                 **{
@@ -100,12 +112,7 @@ class MALClient:
                     "image": web_img_to_api(entry["anime_image_path"]),
                 }
             )
-            for entry in cls.request(
-                url,
-                params={
-                    "status": status_map[status] if status else "",
-                },
-            )
+            for entry in anime_list
         ]
 
     @classmethod
