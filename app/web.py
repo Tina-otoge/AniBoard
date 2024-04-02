@@ -72,7 +72,7 @@ def index():
     response = response or flask.render_template("index.html", **data)
 
     for setting, value in data.items():
-        if value:
+        if isinstance(response, flask.Response):
             response.set_cookie(setting, value, max_age=timedelta(days=365))
 
     return response
