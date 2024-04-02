@@ -36,7 +36,8 @@ def get_data():
 @app.route("/<username>")
 def anime_list_route(username):
     data = get_data()
-    anime_list = get_anime_list(username)
+    ptw = flask.request.args.get("ptw", False)
+    anime_list = get_anime_list(username, ptw=ptw)
 
     def urlize(anime, episode):
         title = Config.button_title_map.get(anime._mal.id, anime.title)

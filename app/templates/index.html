@@ -78,7 +78,20 @@
     </div>
     {% endif %}
 
-    <h2>Backlog</h2>
+    <div class="row">
+        <a href="?ptw=">Watching</a>
+        |
+        <a href="?ptw=1">Plan to watch</a>
+    </div>
+
+
+    <h2>
+        {% if request.args.get('ptw') %}
+        Plan to watch
+        {% else %}
+        Watching
+        {% endif %}
+    </h2>
     <div class="row anime-list">
         {% for anime in anime_list if anime._anilist and not anime.up_to_date %}
         {% include "_anime.html" %}

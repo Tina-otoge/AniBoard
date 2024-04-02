@@ -1,7 +1,9 @@
+import traceback
 from dataclasses import dataclass
 from datetime import timedelta
 
-from .anilist import AnilistClient
+from app import anilist
+
 from .mal import ListEntry, MALClient
 from .mapping import MAL_TO_OTHERS
 
@@ -9,15 +11,7 @@ from .mapping import MAL_TO_OTHERS
 @dataclass
 class Anime:
     _mal: ListEntry
-
-    def __post_init__(self):
-        self._mapping = MAL_TO_OTHERS.get(self._mal.id)
-        if not self._mapping:
-            return
-        anilist_id = self._mapping.get("anilist_id")
-        self._anilist = AnilistClient.get_anime(
-            anilist_id=anilist_id, mal_id=self._mal.id
-        )
+    _anilist: dict = None
 
     @property
     def title(self):
@@ -47,7 +41,8 @@ class Anime:
 
     @property
     def not_watched_episodes(self):
-        left = self.aired_episodes or self.total_episodes
+        # left = self.aired_episodes or self.total_episodes
+        left = self.aired_episodes
         if not left:
             return []
         watched = self.watched_episodes or 0
@@ -55,7 +50,10 @@ class Anime:
 
     @property
     def up_to_date(self):
-        return self.watched_episodes == self.aired_episodes
+        return (
+            self.watched_episodes == self.aired_episodes
+            and self.aired_episodes > 0
+        )
 
     @property
     def time_until_next_episode(self):
@@ -68,11 +66,26 @@ class Anime:
 
     @property
     def season(self):
+        if not self._anilist["season"]:
+            return "Unknown"
         return (
             self._anilist["season"].capitalize()
             + " "
             + str(self._anilist["seasonYear"])
         )
+
+    @property
+    def date(self):
+        if not self._anilist or not self._anilist["season"]:
+            return "0"
+        season_to_num = {
+            "winter": 1,
+            "spring": 4,
+            "summer": 7,
+            "fall": 10,
+        }
+        season_num = season_to_num[self._anilist["season"].lower()]
+        return f"{self._anilist['seasonYear']}-{season_num:02d}"
 
     @property
     def mal_url(self):
@@ -91,6 +104,25 @@ class Anime:
         return self._mapping.get("thetvdb_id")
 
 
-def get_anime_list(mal_username):
-    watching = MALClient.get_list(mal_username, status="watching")
-    return [Anime(x) for x in watching]
+def get_anime_list(mal_username, ptw=False):
+    status = "plan_to_watch" if ptw else "watching"
+    mal_entries = {
+        x.id: x for x in MALClient.get_list(mal_username, status=status)
+    }
+    mal_to_anilist_ids = {
+        x: MAL_TO_OTHERS.get(x, {}).get("anilist_id")
+        for x in mal_entries.keys()
+    }
+    anilist_entries = anilist.get_anime_multiple(
+        [x for x in mal_to_anilist_ids.values() if x]
+    )
+
+    result = [
+        Anime(
+            _mal=mal_entries[mal_id],
+            _anilist=anilist_entries.get(anilist_id),
+        )
+        for mal_id, anilist_id in mal_to_anilist_ids.items()
+    ]
+    result.sort(key=lambda x: x.date, reverse=True)
+    return result

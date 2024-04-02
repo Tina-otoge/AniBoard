@@ -1,5 +1,4 @@
 flask
 gunicorn
 pyyaml
-qlient
 requests-cache
