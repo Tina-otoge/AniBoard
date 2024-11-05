@@ -39,13 +39,14 @@ class SonarrClient:
         if self.series_get(tvdb_id):
             return
         lookup = self.series_lookup(tvdb_id)
+        path_sep = "\\" if "\\" in self.root_folder["path"] else "/"
         lookup.update(
             {
                 "qualityProfileId": 1,
                 "languageProfileId": 1,
                 "path": (
                     self.root_folder["path"]
-                    + "\\"
+                    + path_sep
                     + safeify_title(lookup["title"])
                 ),
                 "rootFolderPath": self.root_folder["path"],
