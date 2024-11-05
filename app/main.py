@@ -12,6 +12,7 @@ from .mapping import MAL_TO_OTHERS
 class Anime:
     _mal: ListEntry
     _anilist: dict = None
+    tvdb_id: int = None
 
     @property
     def title(self):
@@ -99,10 +100,6 @@ class Anime:
     def google_url(self):
         return f"https://www.google.com/search?q=anime%20{self.title}"
 
-    @property
-    def tvdb_id(self):
-        return self._mapping.get("thetvdb_id")
-
 
 def get_anime_list(mal_username, ptw=False):
     status = "plan_to_watch" if ptw else "watching"
@@ -113,6 +110,10 @@ def get_anime_list(mal_username, ptw=False):
         x: MAL_TO_OTHERS.get(x, {}).get("anilist_id")
         for x in mal_entries.keys()
     }
+    mal_to_tvdb_ids = {
+        x: MAL_TO_OTHERS.get(x, {}).get("thetvdb_id")
+        for x in mal_entries.keys()
+    }
     anilist_entries = anilist.get_anime_multiple(
         [x for x in mal_to_anilist_ids.values() if x]
     )
@@ -121,6 +122,7 @@ def get_anime_list(mal_username, ptw=False):
         Anime(
             _mal=mal_entries[mal_id],
             _anilist=anilist_entries.get(anilist_id),
+            tvdb_id=mal_to_tvdb_ids.get(mal_id),
         )
         for mal_id, anilist_id in mal_to_anilist_ids.items()
     ]
