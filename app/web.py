@@ -19,7 +19,7 @@ def inject_app():
     return flask.current_app
 
 
-@app.template_global("app")
+@app.template_global("config")
 def inject_config():
     return Config
 
