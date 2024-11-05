@@ -4,15 +4,7 @@ import yaml
 
 
 class File:
-    _obj = None
-
-    @classmethod
-    @property
-    def obj(cls):
-        if cls._obj is None:
-            with open("conf/config.yml") as f:
-                cls._obj = yaml.safe_load(f)
-        return cls._obj
+    obj = None
 
     @classmethod
     def get(cls, key, default=None):
@@ -24,6 +16,11 @@ class File:
         if value is None:
             raise Exception(f"Missing {key} in config.yaml")
         return value
+
+
+if File.obj is None:
+    with open("conf/config.yml") as f:
+        File.obj = yaml.safe_load(f)
 
 
 class Config:
