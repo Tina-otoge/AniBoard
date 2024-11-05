@@ -84,9 +84,11 @@ def sync_to_sonarr():
     data = get_data()
     anime_list = get_anime_list(data["username"])
     body = flask.request.form.to_dict()
-    client = SonarrClient(body["sonarr_url"], body["sonarr_api_key"])
+    url = body["sonarr_url"].removesuffix("/")
+    client = SonarrClient(url=url, api_key=body["sonarr_api_key"])
     for anime in anime_list:
         if not anime.tvdb_id:
+            print(f"Skipping {anime.title} because it has no tvdb_id")
             continue
         client.series_import(anime.tvdb_id)
     return flask.redirect(flask.url_for("index"))
